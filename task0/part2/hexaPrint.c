@@ -4,6 +4,11 @@
 
 void PrintHex(char* buffer, int length){
 
+		int i;
+		for(i=0; i<length; i++){
+
+			printf("%02hhX ", buffer[i]);
+		}
 }
 
 int main(int argc, char** argv){
@@ -21,7 +26,7 @@ int main(int argc, char** argv){
 
 	while((fread(byte, 1, 1, file)) == 1){
 
-		printf("%hhX ", byte[0]);
+		PrintHex(byte, 1);
 	}
 	puts("");
 
