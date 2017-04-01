@@ -10,7 +10,7 @@ int main(int argc, char** argv){
 	
 	FILE* file;
 	char* filename = argv[1];
-	char byte[2] = {0, 0};
+	char byte[1] = {0};
 
 	file = fopen(filename, "r");
 	if(file == NULL){
@@ -19,10 +19,9 @@ int main(int argc, char** argv){
 		exit(1);
 	}
 
-	int i;
-	while(!feof(file)){
+	while((fread(byte, 1, 1, file)) == 1){
 
-		fread(byte, sizeof(char), sizeof(char), file);	
+		
 		// for(i=0; i < 10; i++){
 
 		printf("%02x ", byte[0]);
