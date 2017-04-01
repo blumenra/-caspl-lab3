@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void PrintHex(char* buffer, int length){
 
@@ -18,7 +19,10 @@ int main(int argc, char** argv){
 	
 	FILE* file;
 	char* filename = argv[1];
-	char byte[1] = {0};
+	char endian[2] = {0, 0};
+	int intEndian = 0;
+	char sizeByte[2] = {0, 0};
+
 
 	file = fopen(filename, "r");
 	if(file == NULL){
@@ -27,13 +31,47 @@ int main(int argc, char** argv){
 		exit(1);
 	}
 
-	fread(byte, 1, 1, file)
+	fread(endian, 1, 2, file);
+	intEndian = endian[0];
+	// printf("endian: %d\n", endian[0]);
+	// printf("currByte: %hhX\n", currByte[0]);
+	// printf("currByte: %d\n", currByte[1]);
+	// fread(currByte, 1, 2, file);
+	// printf("currByte: %x\n", currByte[0]);
+	// printf("currByte: %x\n", currByte[1]);
 
-		
-		// for(i=0; i < 10; i++){
+	
+	// while(fread(sizeByte, 1, 2, file) == 2){
+	fread(sizeByte, 1, 2, file);
+	
 
-		printf("%02x ", byte[0]);
-		// }
+	virus* virus = malloc(sizeof(virus));
+
+	if(intEndian == 0){
+
+		virus->length = sizeByte[0];
+	}
+	else if(intEndian == 1){
+
+		virus->length = sizeByte[1];
+	}
+	else{
+		perror("Invalid endian!");
+		exit(1);
+	}
+	printf("%d\n", virus->length);
+	char sig[virus->length-2-16];
+	fread(virus->name, 1, 16, file);
+	fread(sig, 1, virus->length-2-16, file);
+	printf("%s\n", sig);
+
+	// strcpy(virus->signature, sig);
+
+
+	printf("%s\n", virus->name);
+	// }
+
+
 	
 	puts("");
 
