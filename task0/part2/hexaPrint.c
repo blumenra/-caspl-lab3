@@ -21,11 +21,7 @@ int main(int argc, char** argv){
 
 	while((fread(byte, 1, 1, file)) == 1){
 
-		
-		// for(i=0; i < 10; i++){
-
 		printf("%hhX ", byte[0]);
-		// }
 	}
 	puts("");
 
