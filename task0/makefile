@@ -2,10 +2,10 @@
 all: bubblesort
 
 bubblesort: bubblesort.o
-	gcc -g -m32 -Wall bubblesort.o -o bubblesort
+	gcc -g -Wall bubblesort.o -o bubblesort
 
 bubblesort.o: bubblesort.c
-	gcc -g -m32 -Wall -c bubblesort.c -o bubblesort.o
+	gcc -g -Wall -c bubblesort.c -o bubblesort.o
 
 .PHONY:
 	clean
