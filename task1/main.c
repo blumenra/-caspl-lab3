@@ -88,11 +88,27 @@ void PrintHex(char* buffer, int length){
 
 void list_print(link *virus_list){
 
+	//****Add to the beginning
 	link* currLink = virus_list;
-
+	int size = 0;
+	while(currLink != NULL){
+		size++;
+		currLink = currLink->next;
+	}
+	virus* viruses[size];
+	currLink = virus_list;
+	int i = 0;
 	while(currLink != NULL){
 
-		virus* virus = currLink->v;
+		viruses[i] = currLink->v;
+		i++;
+		currLink = currLink->next;
+	}
+
+	i = size-1;
+	while(i >= 0){
+
+		virus* virus = viruses[i];
 
 		fprintf(stdout, "%s", "Virus name: ");
 		fprintf(stdout, "%s\n", virus->name);
@@ -102,8 +118,32 @@ void list_print(link *virus_list){
 		PrintHex(virus->signature, virus->length);
 		puts("\n");
 
-		currLink = currLink->next;
+		i--;
 	}
+
+	//****Add to the beginning
+
+
+	//****Add to the end
+	// link* currLink = virus_list;
+
+	// while(currLink != NULL){
+
+	// 	virus* virus = currLink->v;
+
+	// 	fprintf(stdout, "%s", "Virus name: ");
+	// 	fprintf(stdout, "%s\n", virus->name);
+	// 	fprintf(stdout, "%s", "Virus size: ");
+	// 	fprintf(stdout, "%d\n", virus->length);
+	// 	fprintf(stdout, "%s\n", "Signature: ");
+	// 	PrintHex(virus->signature, virus->length);
+	// 	puts("\n");
+
+	// 	currLink = currLink->next;
+	// }
+	//****Add to the end
+
+
 }
 
 link* list_append(link* virus_list, virus* data){
@@ -117,23 +157,23 @@ link* list_append(link* virus_list, virus* data){
 	}
 
 	//****Add to the beginning
-	// link* link1 = (link*) malloc(sizeof(link));
-	// link1->v = data;
-	// link1->next = virus_list;
-	// return link1;
+	link* link1 = (link*) malloc(sizeof(link));
+	link1->v = data;
+	link1->next = virus_list;
+	return link1;
 	//****Add to the beginning
 
 	//****Add to the end
-	link* currLink = virus_list;
-	while(currLink->next != NULL){
-		currLink = currLink->next;
-	}
+	// link* currLink = virus_list;
+	// while(currLink->next != NULL){
+	// 	currLink = currLink->next;
+	// }
 
-	link* link1 = (link*) malloc(sizeof(link));
-	link1->v = data;
-	link1->next = NULL;
-	currLink->next = link1;
-	return virus_list;
+	// link* link1 = (link*) malloc(sizeof(link));
+	// link1->v = data;
+	// link1->next = NULL;
+	// currLink->next = link1;
+	// return virus_list;
 	//****Add to the end
 }
 
