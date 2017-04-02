@@ -4,6 +4,10 @@
 
 void PrintHex(char* buffer, int length){
 
+	int i;
+	for(i=0; i<length; i++){
+		fprintf(stdout, "%hhX ", buffer[i]);
+	}
 }
 
 
@@ -47,28 +51,31 @@ int main(int argc, char** argv){
 
 	virus* virus = malloc(sizeof(virus));
 
+	short len =0;
 	if(intEndian == 0){
 
-		virus->length = sizeByte[0];
+		len = sizeByte[0]-18;
 	}
 	else if(intEndian == 1){
 
-		virus->length = sizeByte[1];
+		len = sizeByte[1]-18;
 	}
 	else{
 		perror("Invalid endian!");
 		exit(1);
 	}
+	virus->length = len;
+
 	printf("%d\n", virus->length);
 	char sig[virus->length-2-16];
 	fread(virus->name, 1, 16, file);
 	fread(sig, 1, virus->length-2-16, file);
-	printf("%s\n", sig);
-
-	// strcpy(virus->signature, sig);
-
-
+	strcpy(virus->signature, sig);
 	printf("%s\n", virus->name);
+	PrintHex(virus->signature, virus->length);
+
+
+
 	// }
 
 
