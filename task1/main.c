@@ -9,6 +9,7 @@ void PrintHex(char* buffer, int length);
 void list_print(link *virus_list);
 link* list_append(link* virus_list, virus* data);
 void list_free(link *virus_list);
+void detect_virus(char *buffer, link *virus_list, unsigned int size);
  
 struct virus {
     unsigned short length;
@@ -24,25 +25,27 @@ struct link {
 
 int main(int argc, char** argv){
 	
-	FILE* file;
+	FILE* file1;
 	char* filename = argv[1];
+	char* signatures = "signatures1";
 	char endian[2] = {0, 0};
 	int intEndian = 0;
 	char sizeByte[2] = {0, 0};
 	link* list = NULL;
+	char buffer[10000];
 
 
-	file = fopen(filename, "r");
-	if(file == NULL){
+	file1 = fopen(signatures, "r");
+	if(file1 == NULL){
 
 		perror("fopen");
 		exit(1);
 	}
 
-	fread(endian, 1, 1, file);
+	fread(endian, 1, 1, file1);
 	intEndian = endian[0];
 	
-	while(fread(sizeByte, 1, 2, file) == 2){
+	while(fread(sizeByte, 1, 2, file1) == 2){
 
 
 		short len = 0;
@@ -62,15 +65,25 @@ int main(int argc, char** argv){
 		virus* tempVirus = (virus*) malloc(sizeof(short)+sizeof(char)*(16+len));
 		tempVirus->length = len;
 
-		fread(tempVirus->name, 1, 16+tempVirus->length, file);
+		fread(tempVirus->name, 1, 16+tempVirus->length, file1);
 
 		list = list_append(list, tempVirus);
 	}
 
-	list_print(list);
+	FILE *file2 = fopen(filename, "r");
+	fseek(file2, 0, SEEK_END);
+	int fileSize = ftell(file2);
+	fseek(file2, 0, SEEK_SET);  //same as rewind(f);
+
+	fread(buffer, 1, fileSize, file2);
+
+	detect_virus(buffer, list, fileSize);
+
+	// list_print(list);
 	list_free(list);
 
-	fclose(file);
+	fclose(file1);
+	fclose(file2);
 
 	return 0;
 };
@@ -189,3 +202,26 @@ void list_free(link *virus_list){
 		free(currLink);
 	}
 };
+
+void detect_virus(char *buffer, link *virus_list, unsigned int size){
+
+	link* currLink = virus_list;
+	virus* currVirus;
+	while(currLink != NULL){
+
+		currVirus = currLink->v;
+		int i;
+		int res;
+		for(i=0; i<size; i++){
+			
+			res = memcmp(buffer+i, currVirus->signature, currVirus->length);
+
+			if(res == 0){
+				fprintf(stdout, "Starting byte location: %d\n", i);
+				fprintf(stdout, "Virus name: %s\n", currVirus->name);
+				fprintf(stdout, "Virus signature size: %d\n", currVirus->length);
+			}
+		}
+		currLink = currLink->next;
+	}
+}
