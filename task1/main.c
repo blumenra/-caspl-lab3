@@ -28,6 +28,7 @@ int main(int argc, char** argv){
 	char endian[2] = {0, 0};
 	int intEndian = 0;
 	char sizeByte[2] = {0, 0};
+	link* list = NULL;
 
 
 	file = fopen(filename, "r");
@@ -41,6 +42,7 @@ int main(int argc, char** argv){
 	intEndian = endian[0];
 	
 	while(fread(sizeByte, 1, 2, file) == 2){
+
 
 		virus* tempVirus = (virus*) malloc(sizeof(virus));
 
@@ -64,17 +66,11 @@ int main(int argc, char** argv){
 		fread(sig, 1, tempVirus->length, file);
 		tempVirus->signature = sig;
 
-		fprintf(stdout, "%s", "Virus name: ");
-		fprintf(stdout, "%s\n", tempVirus->name);
-		fprintf(stdout, "%s", "Virus size: ");
-		fprintf(stdout, "%d\n", tempVirus->length);
-		fprintf(stdout, "%s\n", "Signature: ");
-		PrintHex(tempVirus->signature, tempVirus->length);
-		puts("\n");
-
-		free(tempVirus->signature);
-		free(tempVirus);
+		list = list_append(list, tempVirus);
 	}
+
+	list_print(list);
+	list_free(list);
 
 	fclose(file);
 
@@ -115,27 +111,29 @@ link* list_append(link* virus_list, virus* data){
 	if(virus_list == NULL){
 
 		link* new_list = (link*) malloc(sizeof(link));
+		new_list->v = data;
+		new_list->next = NULL;
 		return new_list;
 	}
 
 	//****Add to the beginning
-	link* link1 = (link*) malloc(sizeof(link));
-	link1->v = data;
-	link1->next = virus_list;
-	return link1;
+	// link* link1 = (link*) malloc(sizeof(link));
+	// link1->v = data;
+	// link1->next = virus_list;
+	// return link1;
 	//****Add to the beginning
 
 	//****Add to the end
-	// link* currLink = virus_list;
-	// while(currLink.next != NULL){
-	// 	currLink = currLink.next;
-	// }
+	link* currLink = virus_list;
+	while(currLink->next != NULL){
+		currLink = currLink->next;
+	}
 
-	// link* link = (link*) malloc(sizeof(link));
-	// link->v = data;
-	// link->next = NULL;
-	// currLink.next = link;
-	// return virus_list;
+	link* link1 = (link*) malloc(sizeof(link));
+	link1->v = data;
+	link1->next = NULL;
+	currLink->next = link1;
+	return virus_list;
 	//****Add to the end
 }
 
@@ -146,11 +144,13 @@ void list_free(link *virus_list){
 		link* currLink = virus_list;
 		link* nextLink = virus_list->next;
 		while(nextLink != NULL){
+			free(currLink->v->signature);
 			free(currLink->v);
 			free(currLink);
 			currLink = nextLink;
 			nextLink = nextLink->next;
 		}
+		free(currLink->v->signature);
 		free(currLink->v);
 		free(currLink);
 	}
