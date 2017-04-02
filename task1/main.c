@@ -37,13 +37,6 @@ int main(int argc, char** argv){
 
 	fread(endian, 1, 1, file);
 	intEndian = endian[0];
-	// printf("endian: %d\n", endian[0]);
-	// printf("currByte: %hhX\n", currByte[0]);
-	// printf("currByte: %d\n", currByte[1]);
-	// fread(currByte, 1, 2, file);
-	// printf("currByte: %x\n", currByte[0]);
-	// printf("currByte: %x\n", currByte[1]);
-
 	
 	while(fread(sizeByte, 1, 2, file) == 2){
 
@@ -65,7 +58,6 @@ int main(int argc, char** argv){
 		virus.length = len;
 		char* sig = (char*) malloc(sizeof(char)*(virus.length));
 
-		// char sig[virus->length];
 		fread(virus.name, 1, 16, file);
 		fread(sig, 1, virus.length, file);
 		virus.signature = sig;
@@ -80,9 +72,6 @@ int main(int argc, char** argv){
 
 		free(virus.signature);
 	}
-
-	
-
 
 	fclose(file);
 
